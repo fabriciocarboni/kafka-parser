@@ -1,44 +1,45 @@
 # -*- coding: utf-8 -*-
 
-
 import yaml
+import os
 
 
-useQuotaBaseDir = '/home/fabricio/Documents/kafka-parser/file.yml'
+#useQuotaBaseDir = '/home/fabricio/Documents/kafka-parser/'
+useQuotaBaseDir = 'C:/Users/patf001/Documents/my_stuff/kafka-parser/'
 
-with open(useQuotaBaseDir, 'r') as f:
-    try:
-        yml = yaml.safe_load(f)
-        #print(type(yml))
-        print(yml)
-    except yaml.YAMLError as e:
-        print(e)
+def parse_file():
 
+    # check if directory is not empty
+    if os.listdir(useQuotaBaseDir):
+        yaml_file = [f for f in os.listdir(useQuotaBaseDir) if f.endswith(('yml', 'yaml'))]
+        for f in yaml_file:
+            with open(useQuotaBaseDir + f, 'r') as f:
+                try:
+                    yml = yaml.safe_load(f)
+                except yaml.YAMLError as e:
+                    print(e)
 
-#print("myTopic" in [x for v in yml.values() for x in v])
+    #looping through dict to find the list containing kafkaprincipal
+    for key, value in yml.items():
+        if isinstance(value, dict):
+            for k, v in value.items():
+                if isinstance(v, dict):
+                    for x, y in v.items():
+                        if isinstance(y, list):
+                            kafka_princ = y
+        
+    for item in kafka_princ:
+        for key, value in item.items():
+            #print(key, "->", value)
+            if(key == 'kafkaPrincipal'):
+                value_cleaned = value.replace(", ",",")
+                print(value_cleaned)
 
-
-# for i in yml.values():
-#     if isinstance(i,dict):
-#         for k,v in i.items():
-#             print(v)
-
-
-# for key, value in yml.items():
-
-#     ##print(type(value))
-#     if isinstance(value, dict):
-#         for k, v in value.items():
-#             if isinstance(v, dict):
-#                 print(v)
-# 
-
-
-# kafkaPrincipal = "'CN=Something', 'CN=Somethin g', 'CN=Something'"
-
-# print(kafkaPrincipal)
-# print("----")
-# new_var = kafkaPrincipal.replace(", ", ",")
-# print(new_var)
+            
 
 
+
+
+if __name__ == '__main__':
+
+    parse_file()

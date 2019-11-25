@@ -11,7 +11,7 @@ testing-no-pi-data-.quota:
     prod: false
 
     userQuota:
-      - kafkaPrincipal: 'CN=kafka-rajeev,OU=2009 ,O=MyCompany Inc .,C=US'
+      - kafkaPrincipal: 'CN=kafka-rajeev, OU=2009, O=MyCompany Inc ., C=US'
         producer_byte_rate: 262144
         consumer_byte_rate: 262144
       - kafkaPrincipal: 'CN=app01, OU=2009, O=MyCompany Inc., C=US'
