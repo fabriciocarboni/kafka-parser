@@ -4,10 +4,7 @@ import yaml
 import os
 
 
-#useQuotaBaseDir = '/home/fabricio/Documents/kafka-parser/'
-useQuotaBaseDir = 'C:/Users/patf001/Documents/my_stuff/kafka-parser/'
-
-def parse_file():
+def parse_kafka_principal(useQuotaBaseDir):
 
     # check if directory is not empty
     if os.listdir(useQuotaBaseDir):
@@ -32,7 +29,11 @@ def parse_file():
         for key, value in item.items():
             #print(key, "->", value)
             if(key == 'kafkaPrincipal'):
-                value_cleaned = value.replace(", ",",")
+                #regexp to find spaces after comma
+                exp = ''
+                #value_cleaned = value.replace(", ",",")
+                msg = '[WARNING] There are errors in kafkaPrincipal, please update it'
+                print(msg)
                 print(value_cleaned)
 
             
@@ -42,4 +43,8 @@ def parse_file():
 
 if __name__ == '__main__':
 
-    parse_file()
+    
+    #useQuotaBaseDir = '/home/fabricio/Documents/kafka-parser/'
+    useQuotaBaseDir = 'C:/Users/patf001/Documents/my_stuff/kafka-parser/'
+
+    parse_kafka_principal(useQuotaBaseDir)
