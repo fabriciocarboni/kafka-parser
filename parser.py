@@ -42,8 +42,9 @@ def parse_kafka_principal(useQuotaBaseDir):
         if match:
             print(
                 '[WARNING] There are spaces after comma in kafkaPrincipal parameter, please update it')
-            clean = item.replace(", ", ",")
-            print('[INFO] it should be like this => ' + clean)
+            clean_spaces = item.replace(", ", ",")
+            print('[INFO] it should be like this => ' + clean_spaces)
+            print('')
 
     # execute command
     #cmd = 'kafka-configs.sh --zookeeper localhost:2181 --alter --add-config producer_byte_rate = $VALUE1, consumer_byte_rate = $vALUE2  --entity-type users --entity-name \'userPrincipal\''
