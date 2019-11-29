@@ -103,6 +103,13 @@ dataSources:
       task.replicants: 2
       topicPattern: wikipedia.*
       topicPattern.priority: 1
+    userQuota:
+      - kafkaPrincipal: 'CN=kafka-123456, OU=2009, O=MyCompany Inc ., C=US'
+        producer_byte_rate: 262144
+        consumer_byte_rate: 262144
+      - kafkaPrincipal: 'CN=kafka-123456, OU=2009, O=MyCompany Inc., C=US'
+        producer_byte_rate: 524288
+        consumer_byte_rate: 262144
 
 properties:
   zookeeper.connect: localhost:2181
