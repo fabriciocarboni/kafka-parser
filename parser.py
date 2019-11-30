@@ -37,11 +37,13 @@ def parse_kafka_principal(useQuotaBaseDir):
                     for x in findkeys(j, kv):
                         yield x
 
+    # find defined above key in ymal file
     kafka_principal_items = list(findkeys(yml, key))
 
     # Checking kafkaPrincipal values
     for item in kafka_principal_items:
 
+        # looking for spaces after any comma
         match = re.search(r", ", item)
 
         if match:
