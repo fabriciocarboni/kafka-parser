@@ -15,7 +15,7 @@ def parse_kafka_principal(useQuotaBaseDir):
 
     if os.listdir(useQuotaBaseDir):
         yaml_file = [
-            f for f in os.listdir(useQuotaBaseDir) if f.endswith(("yml", "yaml"))
+            file for file in os.listdir(useQuotaBaseDir) if file.endswith(("yml", "yaml"))
         ]
 
         for f in yaml_file:
@@ -79,8 +79,6 @@ def parse_kafka_principal(useQuotaBaseDir):
 
 
 if __name__ == "__main__":
-
-    # print(list(findkeys(d, 'id')))
 
     useQuotaBaseDir = "/home/fabricio/Documents/kafka-parser/"
     # useQuotaBaseDir = 'C:/Users/patf001/Documents/my_stuff/kafka-parser/'
