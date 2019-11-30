@@ -26,11 +26,8 @@ dataSources:
               spatialDimensions: [{ dimName: geo, dims: [lat, lon] }]
               userQuota:
                 - kafkaPrincipal: 'CN=kafka-rajeev, OU=2009, O=MyCompany Inc ., C=US'
-                  producer_byte_rate: 262144
-                  consumer_byte_rate: 262144
-                - kafkaPrincipal: 'CN=app01, OU=2009, O=MyCompany Inc., C=US'
-                  producer_byte_rate: 524288
-                  consumer_byte_rate: 262144
+                  producer_byte_rate: 262145
+                  consumer_byte_rate: 262145
 
         metricsSpec:
           - { type: count, name: tweets }
@@ -91,6 +88,10 @@ dataSources:
           type: uniform
           segmentGranularity: hour
           queryGranularity: none
+          userQuota:
+            - kafkaPrincipal: 'CN=kafka-rajeev, OU=2009, O=MyCompany Inc ., C=US'
+              producer_byte_rate: 262144
+              consumer_byte_rate: 262145234
 
       tuningConfig:
         type: realtime
@@ -103,13 +104,6 @@ dataSources:
       task.replicants: 2
       topicPattern: wikipedia.*
       topicPattern.priority: 1
-    userQuota:
-      - kafkaPrincipal: 'CN=kafka-123456, OU=2009, O=MyCompany Inc ., C=US'
-        producer_byte_rate: 262144
-        consumer_byte_rate: 262144
-      - kafkaPrincipal: 'CN=kafka-123456, OU=2009, O=MyCompany Inc., C=US'
-        producer_byte_rate: 524288
-        consumer_byte_rate: 262144
 
 properties:
   zookeeper.connect: localhost:2181
