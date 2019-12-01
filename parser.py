@@ -15,7 +15,9 @@ def parse_kafka_principal(useQuotaBaseDir):
 
     if os.listdir(useQuotaBaseDir):
         yaml_file = [
-            file for file in os.listdir(useQuotaBaseDir) if file.endswith(("yml", "yaml"))
+            file
+            for file in os.listdir(useQuotaBaseDir)
+            if file.endswith(("yml", "yaml"))
         ]
 
         for f in yaml_file:
@@ -61,21 +63,35 @@ def parse_kafka_principal(useQuotaBaseDir):
     consumer_byte_rate_items = list(findkeys(yml, key_consumer_byte_rate))
 
     # Looping through 2 lists at the same time and compare byte rate
-    for (x, y) in zip(producer_byte_rate_items, consumer_byte_rate_items):
-        # print("producer: ", x ,"; consumer: ", y)
-        if (int(x) >= max_producer_byte_rate) or (int(y) >= max_consumer_byte_rate):
-            cmd = (
-                "kafka-configs.sh  --zookeeper localhost:2181 --alter --add-config 'producer_byte_rate="
-                + str(max_producer_byte_rate)
-                + ",consumer_byte_rate="
-                + str(max_consumer_byte_rate)
-                + "' --entity-type users --entity-name '$userPrinciple'"
-            )
-            print(cmd)
-            # print("producer: ", str(max_producer_byte_rate), "; consumer: ", str(max_consumer_byte_rate))
+    for (producer_byte_rate, consumer_byte_rate) in zip(
+        producer_byte_rate_items, consumer_byte_rate_items
+    ):
 
-            # execute command
-            # os.system(cmd)
+        if int(producer_byte_rate) >= int(max_producer_byte_rate):
+            set_producer_byte_rate = max_producer_byte_rate
+            print("producer:" + str(set_producer_byte_rate))
+        else:
+            set_producer_byte_rate = producer_byte_rate
+            print("producer:" + str(set_producer_byte_rate))
+        
+        if int(consumer_byte_rate) >= int(max_consumer_byte_rate):
+            set_consumer_byte_rate = max_consumer_byte_rate
+            print("consumer:" + str(set_consumer_byte_rate))
+        else:
+            set_consumer_byte_rate = consumer_byte_rate
+            print("consumer:" + str(set_consumer_byte_rate))
+
+        cmd = (
+            "kafka-configs.sh  --zookeeper localhost:2181 --alter --add-config 'producer_byte_rate="
+            + str(set_producer_byte_rate)
+            + ",consumer_byte_rate="
+            + str(set_consumer_byte_rate)
+            + "' --entity-type users --entity-name '$userPrinciple'"
+        )
+        print(cmd)
+
+        # execute command
+        # os.system(cmd)
 
 
 if __name__ == "__main__":
@@ -84,6 +100,4 @@ if __name__ == "__main__":
     # useQuotaBaseDir = 'C:/Users/patf001/Documents/my_stuff/kafka-parser/'
 
     parse_kafka_principal(useQuotaBaseDir)
-
-    
 

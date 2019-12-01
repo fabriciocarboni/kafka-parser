@@ -26,8 +26,8 @@ dataSources:
               spatialDimensions: [{ dimName: geo, dims: [lat, lon] }]
               userQuota:
                 - kafkaPrincipal: 'CN=kafka-rajeev, OU=2009, O=MyCompany Inc ., C=US'
-                  producer_byte_rate: 262145
-                  consumer_byte_rate: 262145
+                  producer_byte_rate: 262144
+                  consumer_byte_rate: 262143
 
         metricsSpec:
           - { type: count, name: tweets }
@@ -61,6 +61,10 @@ dataSources:
             timestampSpec:
               column: timestamp
               format: auto
+              userQuota:
+                - kafkaPrincipal: 'CN=kafka-rajeev, OU=2009, O=MyCompany Inc ., C=US'
+                  producer_byte_rate: 123
+                  consumer_byte_rate: 123
             dimensionsSpec:
               dimensions:
                 [
@@ -91,7 +95,7 @@ dataSources:
           userQuota:
             - kafkaPrincipal: 'CN=kafka-rajeev, OU=2009, O=MyCompany Inc ., C=US'
               producer_byte_rate: 262144
-              consumer_byte_rate: 262145234
+              consumer_byte_rate: 262145
 
       tuningConfig:
         type: realtime
