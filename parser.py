@@ -69,17 +69,12 @@ def parse_kafka_principal(useQuotaBaseDir):
 
         if int(producer_byte_rate) >= int(max_producer_byte_rate):
             set_producer_byte_rate = max_producer_byte_rate
-            print("producer:" + str(set_producer_byte_rate))
         else:
             set_producer_byte_rate = producer_byte_rate
-            print("producer:" + str(set_producer_byte_rate))
-        
         if int(consumer_byte_rate) >= int(max_consumer_byte_rate):
             set_consumer_byte_rate = max_consumer_byte_rate
-            print("consumer:" + str(set_consumer_byte_rate))
         else:
             set_consumer_byte_rate = consumer_byte_rate
-            print("consumer:" + str(set_consumer_byte_rate))
 
         cmd = (
             "kafka-configs.sh  --zookeeper localhost:2181 --alter --add-config 'producer_byte_rate="
