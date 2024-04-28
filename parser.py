@@ -4,22 +4,37 @@ import yaml
 import re
 import os
 
+def parse_kafka_principal(useQuotaBaseDir: str) -> None:
+    """
+    Parses Kafka principal configurations from YAML files within a specified directory,
+    checks for specific conditions, and prints commands based on those conditions.
 
-def parse_kafka_principal(useQuotaBaseDir):
+    Args:
+    useQuotaBaseDir (str): The directory path where YAML configuration files are located.
 
+    This function performs the following operations:
+    - Finds and loads YAML files from the specified directory.
+    - Searches for specific keys within the loaded YAML content.
+    - Checks for and corrects formatting issues in kafkaPrincipal values.
+    - Compares byte rate values against predefined maximums and constructs command strings accordingly.
+    """
+    # Predefined keys and maximum byte rate values
     key = "kafkaPrincipal"
     key_producer_byte_rate = "producer_byte_rate"
     key_consumer_byte_rate = "consumer_byte_rate"
     max_producer_byte_rate = 262144
     max_consumer_byte_rate = 262144
 
+    # Check if the directory is not empty and proceed
     if os.listdir(useQuotaBaseDir):
+        # List comprehension to filter out YAML files
         yaml_file = [
             file
             for file in os.listdir(useQuotaBaseDir)
             if file.endswith(("yml", "yaml"))
         ]
 
+        # Process each YAML file found
         for f in yaml_file:
             with open(useQuotaBaseDir + f, "r") as f:
                 try:
@@ -27,7 +42,17 @@ def parse_kafka_principal(useQuotaBaseDir):
                 except yaml.YAMLError as e:
                     print(e)
 
-        def findkeys(node, kv):
+        def findkeys(node: Union[dict, list], kv: str) -> Generator[Any, None, None]:
+            """
+            A generator function to find values associated with a given key in a nested data structure.
+
+            Args:
+            node (dict or list): The data structure to search through.
+            kv (str): The key to search for.
+
+            Yields:
+            The value associated with the given key.
+            """
             if isinstance(node, list):
                 for i in node:
                     for x in findkeys(i, kv):
@@ -39,60 +64,41 @@ def parse_kafka_principal(useQuotaBaseDir):
                     for x in findkeys(j, kv):
                         yield x
 
-    # find defined above key in ymal file
+    # Find and list all kafkaPrincipal items in the YAML file
     kafka_principal_items = list(findkeys(yml, key))
 
-    # Checking kafkaPrincipal values
+    # Check and correct formatting in kafkaPrincipal values
     for item in kafka_principal_items:
-
-        # looking for spaces after any comma
+        # Look for spaces after any comma
         match = re.search(r", ", item)
-
         if match:
-            print(
-                "[WARNING] There are spaces after comma in "
-                + key
-                + " parameter, please update it"
-            )
+            print(f"[WARNING] There are spaces after comma in {key} parameter, please update it")
             clean_spaces = item.replace(", ", ",")
-            print("[WARNING] it should be like this => " + clean_spaces)
-            print("")
+            print(f"[WARNING] it should be like this => {clean_spaces}\n")
 
-    # Checking producer_byte_rate and consumer_byte_rate
+    # Find and list byte rate items in the YAML file
     producer_byte_rate_items = list(findkeys(yml, key_producer_byte_rate))
     consumer_byte_rate_items = list(findkeys(yml, key_consumer_byte_rate))
 
-    # Looping through 2 lists at the same time and compare byte rate
-    for (producer_byte_rate, consumer_byte_rate) in zip(
-        producer_byte_rate_items, consumer_byte_rate_items
-    ):
+    # Loop through both lists, compare byte rates, and print commands
+    for (producer_byte_rate, consumer_byte_rate) in zip(producer_byte_rate_items, consumer_byte_rate_items):
+        # Compare and set byte rates based on maximum allowed values
+        set_producer_byte_rate = max_producer_byte_rate if int(producer_byte_rate) >= max_producer_byte_rate else producer_byte_rate
+        set_consumer_byte_rate = max_consumer_byte_rate if int(consumer_byte_rate) >= max_consumer_byte_rate else consumer_byte_rate
 
-        if int(producer_byte_rate) >= int(max_producer_byte_rate):
-            set_producer_byte_rate = max_producer_byte_rate
-        else:
-            set_producer_byte_rate = producer_byte_rate
-        if int(consumer_byte_rate) >= int(max_consumer_byte_rate):
-            set_consumer_byte_rate = max_consumer_byte_rate
-        else:
-            set_consumer_byte_rate = consumer_byte_rate
-
+        # Construct and print the command
         cmd = (
-            "kafka-configs.sh  --zookeeper localhost:2181 --alter --add-config 'producer_byte_rate="
-            + str(set_producer_byte_rate)
-            + ",consumer_byte_rate="
-            + str(set_consumer_byte_rate)
-            + "' --entity-type users --entity-name '$userPrinciple'"
+            f"kafka-configs.sh  --zookeeper localhost:2181 --alter --add-config 'producer_byte_rate="
+            f"{set_producer_byte_rate},consumer_byte_rate={set_consumer_byte_rate}' --entity-type users --entity-name '$userPrinciple'"
         )
         print(cmd)
 
-        # execute command
-        # os.system(cmd)
-
-
 if __name__ == "__main__":
-
+    # Define the base directory for Kafka YAML configurations
     useQuotaBaseDir = "/home/fabricio/Documents/kafka-parser/"
+    # Alternative path example (commented out)
     # useQuotaBaseDir = 'C:/Users/patf001/Documents/my_stuff/kafka-parser/'
 
-    parse_kafka_principal(useQuotaBaseDir)
-
+    # Call the main function
+    parse_kafka_principal(useQuotaBaseDir) # type: ignore
+    
